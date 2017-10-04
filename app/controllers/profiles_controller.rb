@@ -4,17 +4,16 @@ class ProfilesController < ApplicationController
   # GET /profiles
   # GET /profiles.json
   def index
-    @profiles = Profile.all
+    if current_user.profile.gender == "male"
+      @profiles = Profile.where(gender: "female")
+    else
+      @profiles = Profile.where(gender: "male")
+    end
   end
 
   # GET /profiles/1
   # GET /profiles/1.json
   def show
-  end
-
-  # GET /profiles/new
-  def new
-    @profile = Profile.new
   end
 
   # GET /profiles/1/edit
@@ -25,6 +24,7 @@ class ProfilesController < ApplicationController
   # POST /profiles.json
   def create
     @profile = Profile.new(profile_params)
+    @profile.user_id = current_user.id
 
     respond_to do |format|
       if @profile.save
@@ -69,6 +69,6 @@ class ProfilesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def profile_params
-      params.require(:profile).permit(:avatar, :description)
+      params.require(:profile).permit(:avatar, :description, :name, :gender)
     end
 end
